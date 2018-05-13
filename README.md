@@ -1,4 +1,4 @@
-####图像合成工具
+####图像合成工具
 主要用来合成cocos creator所需要的plist文件用法
 ```
 node imgMerge.js sourceDir outputDir
@@ -42,4 +42,4 @@ design/
         ├── 0.png
         └── 1.png
 ```
-只有文件夹后缀为'_p'的才会合成图片
+只有文件夹后缀为'_p'的才会合成图片
