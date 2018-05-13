@@ -1,0 +1,21 @@
+{
+  "name": "node_tools",
+  "version": "1.0.0",
+  "description": "node tools",
+  "main": "imgMerge.js",
+  "dependencies": {
+    "get-pixels": "^3.3.0",
+    "gm": "^1.23.1",
+    "plist": "^3.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yohoj",
+  "license": "ISC",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  }
+}

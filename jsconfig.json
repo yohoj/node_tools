@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "commonjs"
+    },
+    "parserOptions": {
+        "ecmaVersion": 6,
+         "sourceType": "module"
+    }
+}
