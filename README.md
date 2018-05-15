@@ -1,4 +1,10 @@
 图像合成工具
+首先要安装GraphicsMagick和ImageMagick
+mac安装如下
+```
+brew install imagemagick
+brew install graphicsmagick
+```
 主要用来合成cocos creator所需要的plist文件用法
 ```
 node imgMerge.js sourceDir outputDir

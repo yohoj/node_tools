@@ -2,7 +2,7 @@
   "name": "node_tools",
   "version": "1.0.0",
   "description": "node tools",
-  "main": "imgMerge.js",
+  "main": "main.js",
   "dependencies": {
     "get-pixels": "^3.3.0",
     "gm": "^1.23.1",
