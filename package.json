@@ -4,8 +4,10 @@
   "description": "node tools",
   "main": "main.js",
   "dependencies": {
+    "crypto": "^1.0.1",
     "get-pixels": "^3.3.0",
     "gm": "^1.23.1",
+    "node-pngquant-native": "^2.0.1",
     "plist": "^3.0.1"
   },
   "devDependencies": {},
