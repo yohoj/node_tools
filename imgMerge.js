@@ -103,22 +103,28 @@ class ImgMerge {
 				return;
 			}
 			let pathArr = imgSourceObj[imgSourceKey[key]];
+			// console.log(pathArr);
 			if (!imgNameObj[imgSourceKey[key]]) {
 				imgNameObj[imgSourceKey[key]] = [];
 			}
 			(function next(index) {
 				if (index >= pathArr.length) {
+					console.log('index:',index);
 					nextObj(key + 1);
 					return;
 				}
 
 				let img = pathArr[index];
-				// console.log('img:',img);
-
-				self.getImgSize(img).then((result) => {
-					imgNameObj[imgSourceKey[key]].push(result);
+				if(img.match(/(.*?)png/i)){
+					console.log(index,img);
+					self.getImgSize(img).then((result) => {
+						imgNameObj[imgSourceKey[key]].push(result);
+						next(index + 1);
+					});
+				}
+				else{
 					next(index + 1);
-				});
+				}
 			})(0);
 		})(0);
 	};
@@ -182,6 +188,7 @@ class ImgMerge {
 			let resBuffer = pngquant.compress(buffer, {
 				"speed": 1 //1 ~ 11
 			});
+			console.log(path);
 			fs.writeFile(path, resBuffer, {
 				flags: 'wb'
 			}, (err)=>{});
