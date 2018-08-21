@@ -4,24 +4,28 @@ let workbook;
 const config = {
 	'levels':{
 		'key':'level',
-		'names':['level','distance','time','board_type_0','board_type_1','board_type_2','board_type_3','board_type_4','board_type_5'],
+		'names':['level','distance','time','board_type_0','board_type_1','board_type_2'],//'board_type_3','board_type_4','board_type_5'
 		'method':function (data){
 			for(let i in data){
 				data[i].probability = [];
 				data[i].probability.push(data[i]['board_type_0']);
 				data[i].probability.push(data[i]['board_type_1']);
 				data[i].probability.push(data[i]['board_type_2']);
-				data[i].probability.push(data[i]['board_type_3']);
-				data[i].probability.push(data[i]['board_type_4']);
-				data[i].probability.push(data[i]['board_type_5']);
+				// data[i].probability.push(data[i]['board_type_3']);
+				// data[i].probability.push(data[i]['board_type_4']);
+				// data[i].probability.push(data[i]['board_type_5']);
 				delete data[i]['board_type_0'];
 				delete data[i]['board_type_1'];
 				delete data[i]['board_type_2'];
-				delete data[i]['board_type_3'];
-				delete data[i]['board_type_4'];
-				delete data[i]['board_type_5'];
+				// delete data[i]['board_type_3'];
+				// delete data[i]['board_type_4'];
+				// delete data[i]['board_type_5'];
 			}
 		}
+	},
+	'items':{
+		'key':'id',
+		'names':['name','id','price','type'],
 	}
 };
 function readExcel(argvs) {
@@ -29,6 +33,7 @@ function readExcel(argvs) {
 	let output = argvs[1];
 	console.log('start path:', source,'output:',output);
 	let arr = source.split('/');
+	console.log(arr);
 	let fileName = arr[arr.length-1].split('.')[0];
 	workbook = xlsx.readFile(source);
 	to_json(workbook,fileName,output);

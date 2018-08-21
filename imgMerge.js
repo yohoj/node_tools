@@ -12,6 +12,19 @@ class ImgMerge {
 	constructor(source, output) {
 		this._source = source;
 		this._output = output;
+		let projectPath = process.cwd();
+		this.modifyTimesPath = path.join(projectPath, 'design/sheetModifyTime.json');
+		this.inPath = path.join(projectPath, 'design');
+		this.modifyTimes = {};
+		this.allArea = 0;
+		this.maxWidth = 0;
+		this.maxHeight = 0;
+		this.rects = [];
+		if (fs.existsSync(this.modifyTimesPath)) {
+			this.modifyTimes = require(this.modifyTimesPath);
+		} else {
+			this.modifyTimes = {};
+		}
 		this.findFiles(this._source).then(
 			(imgSourceObj)=>{
 				this.findFilesCall(imgSourceObj);
@@ -31,8 +44,12 @@ class ImgMerge {
 			fs.readdir(dir, (err, files) => {
 				//只留下后缀名为'_p'的文件夹
 				files = files.filter((value) => {
+					if (value.indexOf('_p') >= 0) {  //如果要打包
+						return this.shouldCombine(path.resolve(this.inPath, value));
+					}
 					return value.slice(-2) == '_p';
 				});
+				console.log('files:',files);
 				files.forEach((value) => {
 					let name = value.slice(0, -2);
 					if (!imgSourceObj[name]) {
@@ -91,15 +108,19 @@ class ImgMerge {
 			imgSourceKey.push(i);
 		}
 		(function nextObj(key) {
+			self.maxWidth = 0;
+			self.maxHeight = 0;
+			self.allArea = 0;
 			if (key >= imgSourceKey.length) {
-				for (let name in imgNameObj) {
-					let sp  = new MaxRectsBinPack(2048,2048,true);
-					imgNameObj[name] = sp.insert2(imgNameObj[name],2);
+				/*for (let name in imgNameObj) {
+					let sp  = new MaxRectsBinPack(2048,2048,false);
+					imgNameObj[name] = sp.insert2(imgNameObj[name],0);
 					console.log('start merge:',name);
 					self.mergeImg(imgNameObj[name], name);
 
-				}
+				}*/
 				self.productPlist(imgNameObj);
+				fs.writeFileSync(self.modifyTimesPath, JSON.stringify(self.modifyTimes,2,2), 'utf-8');
 				return;
 			}
 			let pathArr = imgSourceObj[imgSourceKey[key]];
@@ -109,7 +130,18 @@ class ImgMerge {
 			}
 			(function next(index) {
 				if (index >= pathArr.length) {
-					console.log('index:',index);
+					let space = 1;
+					let size = Math.sqrt(self.allArea);
+					let textureWidth = Math.max(size, self.maxWidth + space * 2);
+					let textureHeight = 2048;
+					let sp  = new MaxRectsBinPack(textureWidth,textureHeight,false);
+					let name = imgSourceKey[key];
+					// console.log('imgNaeobj:',imgNameObj,name)
+					imgNameObj[name] = sp.insert2(imgNameObj[name],0);
+					console.log('start merge:',name);
+					self.mergeImg(imgNameObj[name], name);
+					// let pack = new MaxRectsBinPack(textureWidth, textureHeight, false);
+					// let result = pack.insert2(rects, mode);
 					nextObj(key + 1);
 					return;
 				}
@@ -131,25 +163,38 @@ class ImgMerge {
 
 	//获取图片大小
 	getImgSize(img) {
-		let imgObj = {};
 		return new Promise((resolve, reject) => {
 			getPixels(img, (err, pixels) => {
 				if (err) {
 					console.log("Bad image path:",img);
 					return;
 				}
-				imgObj = {
+				let width = pixels.shape[0];
+				let height = pixels.shape[1];
+				let area = width * height;
+				this.maxWidth = Math.max(this.maxWidth, width);
+				this.maxHeight = Math.max(this.maxHeight, height);
+				this.allArea += area;
+				let space = 1;
+				let rect = {
+					name:this.nameFormat(img),
 					path: img,
-					imgName: this.nameFormat(img),
-					width: pixels.shape[0],
-					height: pixels.shape[1],
+					area,
+					width: width + space * 2,
+					height: height + space * 2,
+					sourceW: width,
+					sourceH: height,
+					offX: 0,
+					offY: 0,
 					x:0,
 					y:0,
 				};
-				resolve(imgObj);
+
+				resolve(rect);
 			});
 		});
 	};
+
 
 	//名字分割
 	nameFormat(path) {
@@ -167,7 +212,7 @@ class ImgMerge {
 		imgSourceArr.forEach(img => {
 			let str = (img.x >= 0 ? '+' + img.x : img.x) + (img.y >= 0 ? '+' + img.y : img.y);
 			// console.log(img.name,str);
-			gmCall = gmCall.in('-page', str).in('-background', 'transparent').in(img.path);
+			gmCall = gmCall.in('-page', str).in('-background', 'transparent').in(img.path);//
 			// console.log(gmCall);
 		});
 		gmCall.mosaic()
@@ -226,12 +271,12 @@ class ImgMerge {
 							return;
 						}
 						let imgObj = imgNameObj[i][index];
-						obj.frames[imgObj.imgName + '.png'] = {
-							frame: `{{${imgObj.x},${imgObj.y}},{${imgObj.width},${imgObj.height}}}`,
+						obj.frames[imgObj.name + '.png'] = {
+							frame: `{{${imgObj.x},${imgObj.y}},{${imgObj.sourceW},${imgObj.sourceH}}}`,
 							offset: '{0,0}',
 							rotated: false,
-							sourceColorRect: `{{0,0},{${imgObj.width},${imgObj.height}}}`,
-							sourceSize: `{${imgObj.width},${imgObj.height}}`
+							sourceColorRect: `{{0,0},{${imgObj.sourceW},${imgObj.sourceH}}}`,
+							sourceSize: `{${imgObj.sourceW},${imgObj.sourceH}}`
 						};
 						next(index + 1);
 					})(0);
@@ -246,6 +291,46 @@ class ImgMerge {
 		fsHash.update(buffer);
 		let md5 = fsHash.digest('hex');
 		return md5;
+	}
+
+	 foldModified(path) {
+		let modifyTime = this.modifyTimes[path];
+		let data = fs.statSync(path);
+
+		let mtime = Date.parse(data.mtime) % 100000000;
+
+		this.modifyTimes[path] = mtime;
+
+		return mtime !== modifyTime;
+	}
+
+	shouldCombine(path) {
+		let modified = false;
+		this.everyFold(path,  (fold)=> {
+			if (this.foldModified(fold)) {
+				modified = true;
+			}
+		});
+
+		return modified;
+	}
+
+	everyFold(parent, callback, includeParent = true) {
+		if (includeParent) {
+			callback(parent);
+		}
+		fs.readdirSync(parent).some((item) => {
+			if (item.indexOf('.DS_Store') < 0) {
+				let filePath = path.join(parent, item);
+				let stat = fs.lstatSync(filePath);
+				if (stat.isDirectory()) {
+					if (callback(filePath)) {
+						return true;
+					}
+					this.everyFold(filePath, callback, false);
+				}
+			}
+		});
 	}
 
 }

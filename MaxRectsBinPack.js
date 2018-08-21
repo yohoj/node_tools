@@ -417,9 +417,9 @@ class MaxRectsBinPack {
         let usedRectangles = this.usedRectangles;
         let score = 0;
 
-        if (x == 0 || x + width === this.binWidth)
+        if (x == 0 || x + width >= this.binWidth)
             score += height;
-        if (y == 0 || y + height === this.binHeight)
+        if (y == 0 || y + height >= this.binHeight)
             score += width;
         let rect;
         for (let i = 0; i < usedRectangles.length; i++) {
