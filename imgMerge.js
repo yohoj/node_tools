@@ -13,8 +13,8 @@ class ImgMerge {
 		this._source = source;
 		this._output = output;
 		let projectPath = process.cwd();
-		this.modifyTimesPath = path.join(projectPath, 'design/sheetModifyTime.json');
-		this.inPath = path.join(projectPath, 'design');
+		this.modifyTimesPath = path.join(projectPath, 'design/images/sheetModifyTime.json');
+		this.inPath = path.join(projectPath, 'design/images');
 		this.modifyTimes = {};
 		this.allArea = 0;
 		this.maxWidth = 0;
@@ -37,7 +37,6 @@ class ImgMerge {
 	}
 	//遍历目录
 	findFiles(dir) {
-		console.log('dir:',dir);
 		return new Promise((resolve, reject) => {
 			let imgSourceObj = {};
 			let filesLength = 0;
@@ -49,7 +48,6 @@ class ImgMerge {
 					}
 					return value.slice(-2) == '_p';
 				});
-				console.log('files:',files);
 				files.forEach((value) => {
 					let name = value.slice(0, -2);
 					if (!imgSourceObj[name]) {
@@ -139,16 +137,16 @@ class ImgMerge {
 					// console.log('imgNaeobj:',imgNameObj,name)
 					imgNameObj[name] = sp.insert2(imgNameObj[name],0);
 					console.log('start merge:',name);
-					self.mergeImg(imgNameObj[name], name);
+					self.mergeImg(imgNameObj[name], name).then(()=>{
+						nextObj(key + 1);
+					});
 					// let pack = new MaxRectsBinPack(textureWidth, textureHeight, false);
 					// let result = pack.insert2(rects, mode);
-					nextObj(key + 1);
 					return;
 				}
 
 				let img = pathArr[index];
 				if(img.match(/(.*?)png/i)){
-					console.log(index,img);
 					self.getImgSize(img).then((result) => {
 						imgNameObj[imgSourceKey[key]].push(result);
 						next(index + 1);
@@ -166,7 +164,7 @@ class ImgMerge {
 		return new Promise((resolve, reject) => {
 			getPixels(img, (err, pixels) => {
 				if (err) {
-					console.log("Bad image path:",img);
+					console.log(img + '\n',err);
 					return;
 				}
 				let width = pixels.shape[0];
@@ -207,25 +205,27 @@ class ImgMerge {
 
 	//合图
 	mergeImg(imgSourceArr, output) {
-		let self = this;
-		let gmCall = gm();
-		imgSourceArr.forEach(img => {
-			let str = (img.x >= 0 ? '+' + img.x : img.x) + (img.y >= 0 ? '+' + img.y : img.y);
-			// console.log(img.name,str);
-			gmCall = gmCall.in('-page', str).in('-background', 'transparent').in(img.path);//
-			// console.log(gmCall);
-		});
-		gmCall.mosaic()
-			.write(self._output + output + '.png', (err)=> {
-				if (err) console.log(err);
-				else{
-					self.zipImage(self._output + output + '.png');
-				}
+		return new Promise((resolve, reject) => {
+			let self = this;
+			let gmCall = gm();
+			imgSourceArr.forEach(img => {
+				let str = (img.x >= 0 ? '+' + img.x : img.x) + (img.y >= 0 ? '+' + img.y : img.y);
+				// console.log(img.name,str);
+				gmCall = gmCall.in('-page', str).in('-background', 'transparent').in(img.path);//
+				// console.log(gmCall);
 			});
+			gmCall.mosaic()
+				.write(self._output + output + '.png', (err)=> {
+					if (err) console.log(err);
+					else{
+						self.zipImage(self._output + output + '.png',resolve);
+					}
+				});
+		});
 	};
 
 	//压缩图片
-	zipImage(path){
+	zipImage(path,resolve){
 		// let pngquant = require('node-pngquant-native');
 
 		fs.readFile(path,  (err, buffer) => {
@@ -233,10 +233,11 @@ class ImgMerge {
 			let resBuffer = pngquant.compress(buffer, {
 				"speed": 1 //1 ~ 11
 			});
-			console.log(path);
 			fs.writeFile(path, resBuffer, {
 				flags: 'wb'
-			}, (err)=>{});
+			}, (err)=>{
+				resolve();
+			});
 		});
 	}
 

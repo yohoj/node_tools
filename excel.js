@@ -1,11 +1,15 @@
 const xlsx = require('xlsx');
 const fs = require('fs')
+const path = require('path');
+let projectPath = process.cwd();
+let configPath = path.join(projectPath, 'design/excels/config.js');
+let config = require(configPath);
 let workbook;
-const config = {
+/*{
 	'levels':{
 		'key':'level',
-		'names':['level','distance','time','board_type_0','board_type_1','board_type_2'],//'board_type_3','board_type_4','board_type_5'
-		'method':function (data){
+		'names':['level','boy','girl','time'],//'board_type_3','board_type_4','board_type_5'
+		/!*'method':function (data){
 			for(let i in data){
 				data[i].probability = [];
 				data[i].probability.push(data[i]['board_type_0']);
@@ -21,13 +25,13 @@ const config = {
 				// delete data[i]['board_type_4'];
 				// delete data[i]['board_type_5'];
 			}
-		}
+		}*!/
 	},
 	'items':{
 		'key':'id',
-		'names':['name','id','price','type'],
+		'names':['name','id','price','type','shop'],
 	}
-};
+};*/
 function readExcel(argvs) {
 	let source  = argvs[0];
 	let output = argvs[1];
@@ -61,7 +65,10 @@ function to_json(workbook,fileName,output) {
 	let temp = xlsx.utils.sheet_to_json(worksheet);
 	temp.forEach((obj,index)=>{
 		let key = obj[config[fileName].key];
-		result[key] = obj;
+		if(config[fileName].array && !result[key]){
+			result[key] = [];
+		}
+		result[key].push(obj);
 	});
 	if(config[fileName].method){
 		console.log('method');

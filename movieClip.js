@@ -23,6 +23,10 @@ function readdir(path) {
 	return new Promise((resolve,reject)=>{
 		let arr = path.split('/');
 		let nameFront = arr[arr.length-1];
+		if(nameFront.slice(-2) == '_p'){
+			nameFront = '';
+		}
+		console.log('nameFront',nameFront)
 		fs.readdir(path,{flag:'r'},(err,data)=>{
 			let imgNames = [];
 			let jsonPath =  path + '/' +data.filter((name)=>{return name.match(/(.*?)json/i)})[0];
@@ -36,13 +40,18 @@ function readdir(path) {
 			for(let i=0; i<data.length; ++i){
 				let name = data[i];
 				// if(name.match(/(.*?)png$/i)){
+				if(nameFront){
 					imgNames.push(nameFront + '_' + name);
+				}
+				else{
+					imgNames.push(name);
+				}
 				// }
 				// if(name.match(/(.*?)json/i)){
 				// 	jsonPath = path + '/' + name;
 				// }
 			}
-			console.log(imgNames);
+			// console.log(imgNames);
 			// fs.close()
 			resolve({imgNames,jsonPath})
 
@@ -51,18 +60,22 @@ function readdir(path) {
 }
 
 function readMeta(path){
+	// console.log('meta path:',path);
 	return new Promise(((resolve, reject) => {
 		fs.readFile(path,'utf8',(err,data)=>{
 			if(err){
 				reject(err);
 				return;
 			}
+			// console.log('metadata:',data);
 			resolve(data);
 		});
 	}));
 }
 
 function findUuid(metaObj,name) {
+	console.log('name:',name)
+	// console.log('name:',name,'metaObj',metaObj);
 	for(let i in metaObj){
 		// console.log(i,name);
 		if(i == name){
