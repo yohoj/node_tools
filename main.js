@@ -7,8 +7,6 @@ function main(argvs) {
     	// console.log('')
 	    source = process.cwd() + '/design/images/';
     	output = process.cwd() + '/assets/resources/textures/';
-
-
     }
     let img = new imgMerge(source, output);
 
