@@ -28,6 +28,9 @@ async function readCall(path,file,index,count,outputName) {
 		let name = file.slice(0,-4);
 		await getImgSize(path +file).then(rect => {
 			let obj = rect;
+			if(name == 'dian'){
+				name = '.';
+			}
 			obj.id = name.charCodeAt();
 			obj.x = imgX;
 			imgX += obj.width;
