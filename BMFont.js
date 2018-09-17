@@ -12,18 +12,27 @@ const mkdirp = require('mkdirp');
 const getDirName = require('path').dirname;
 let imgArr = [];
 let imgX = 0;
+let nowCount = 0;
 function readDir(path) {
 	console.log(path);
 	let arr = path.split('/');
 	let outputName = arr[arr.length-2];
 	fs.readdir(path, (err, files) => {
+		console.log('files:',files);
+		let count = 0;
+		nowCount = 0;
+		files.forEach(file=>{
+			if(file.indexOf('.png') > 0){
+				count++;
+			}
+		})
 		files.forEach((file,index) => {
-			readCall(path,file,index,files.length,outputName);
+			readCall(path,file,count,outputName);
 		})
 	})
 }
 
-async function readCall(path,file,index,count,outputName) {
+async function readCall(path,file,count,outputName) {
 	if (file.indexOf('.png') >= 0) {
 		let name = file.slice(0,-4);
 		await getImgSize(path +file).then(rect => {
@@ -35,18 +44,19 @@ async function readCall(path,file,index,count,outputName) {
 			obj.x = imgX;
 			imgX += obj.width;
 			imgArr.push(obj);
-			if(index == count-1){
-				console.log('start');
+			nowCount++;
+			if(nowCount == count){
 				mergeImg(imgArr,path+'output/'+outputName + '.png');
 				writeFnt(imgArr,path + 'output/'+ outputName + '.fnt',outputName+'.png')
 			}
 		});
 	}
-	else if(index == count - 1){
+	else if(nowCount == count){
 		mergeImg(imgArr,path+'output/'+outputName + '.png');
 		writeFnt(imgArr,path + 'output/'+ outputName + '.fnt',outputName+'.png')
 	}
 }
+
 
 //获取图片大小
 function getImgSize(img) {
