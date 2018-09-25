@@ -218,7 +218,12 @@ class ImgMerge {
 				.write(self._output + output + '.png', (err)=> {
 					if (err) console.log(err);
 					else{
-						self.zipImage(self._output + output + '.png',resolve);
+						if((self._output + output).indexOf('_c') < 0){
+							self.zipImage(self._output + output + '.png',resolve);
+						}
+						else{
+							resolve();
+						}
 					}
 				});
 		});
