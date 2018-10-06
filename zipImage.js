@@ -73,7 +73,7 @@ function main(argvs){
 		if (callback) callback();
 	}, () => {
 		zipImages(imgSource);
-		console.log('finish',imgSource);
+		// console.log('finish',imgSource);
 	});
 }
 
