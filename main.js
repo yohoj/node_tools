@@ -4,7 +4,6 @@ function main(argvs) {
     let source = argvs[0];
     let output = argvs[1];
     if(!source){
-    	// console.log('')
 	    source = process.cwd() + '/design/images/';
     	output = process.cwd() + '/assets/resources/textures/';
     }

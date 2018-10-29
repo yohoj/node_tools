@@ -1,10 +1,13 @@
 图像合成工具
-首先要安装GraphicsMagick和ImageMagick
+node 版本6.8.1
+首先要安装GraphicsMagick或者ImageMagick
 mac安装如下
 ```
 brew install imagemagick
 brew install graphicsmagick
 ```
+windows安装graphicsmagick[下载地址](http://www.graphicsmagick.org/INSTALL-windows.html)
+
 主要用来合成cocos creator所需要的plist文件用法
 ```
 node imgMerge.js sourceDir outputDir
@@ -49,3 +52,4 @@ design/
         └── 1.png
 ```
 只有文件夹后缀为'_p'的才会合成图片
+

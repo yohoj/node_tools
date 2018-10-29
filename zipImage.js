@@ -79,7 +79,7 @@ function main(argvs){
 
 async function zipImages(imgSource){
 	for(let i=0; i<imgSource.length; ++i){
-		await zipImage(imgSource[i],)
+		await zipImage(imgSource[i])
 	}
 }
 
