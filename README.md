@@ -1,5 +1,6 @@
+windows node 版本6.8.1
+mac node版本支持8.11.1
 ## 图片合成工具
-node 版本6.8.1
 首先要安装GraphicsMagick或者ImageMagick
 mac安装如下
 ```
