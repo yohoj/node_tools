@@ -36,7 +36,7 @@ function readExcel(argvs) {
 	let source  = argvs[0];
 	let output = argvs[1];
 	console.log('start path:', source,'output:',output);
-	let arr = source.split('/');
+	let arr = source.indexOf('/') >= 0 ? source.split('/') : source.split('\\');
 	console.log(arr);
 	let fileName = arr[arr.length-1].split('.')[0];
 	workbook = xlsx.readFile(source);

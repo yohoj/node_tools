@@ -106,7 +106,7 @@ function main(argvs){
 						}}
 					spriteFrame.push(ani);
 				}
-				let arr = source.split('/');
+				let arr =source.indexOf('/') >= 0 ? source.split('/') : source.split('\\');
 				fs.writeFile(source + '/'+arr[arr.length-1] + '.anim',JSON.stringify(configObj,2,2),(err)=>{
 					if(err){
 						console.log('write err:',err);

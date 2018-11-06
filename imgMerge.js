@@ -10,9 +10,10 @@ const pngquant = require('node-pngquant-native');
 
 
 class ImgMerge {
-	constructor(source, output) {
+	constructor(source, output,type) {
 		this._source = source;
 		this._output = output;
+		this._type = type;
 		let projectPath = process.cwd();
 		this.modifyTimesPath = path.join(projectPath, 'design/images/sheetModifyTime.json');
 		this.inPath = path.join(projectPath, 'design/images');
@@ -121,7 +122,12 @@ class ImgMerge {
 					self.mergeImg(imgNameObj[name], name);
 
 				}*/
-				self.productPlist(imgNameObj);
+				if(self._type == 0){
+					self.productPlist(imgNameObj);
+				}
+				else{
+					self.productJson(imgNameObj);
+				}
 				fs.writeFileSync(self.modifyTimesPath, JSON.stringify(self.modifyTimes, 2, 2), 'utf-8');
 				return;
 			}
@@ -286,6 +292,43 @@ class ImgMerge {
 						rotated: false,
 						sourceColorRect: `{{0,0},{${imgObj.sourceW},${imgObj.sourceH}}}`,
 						sourceSize: `{${imgObj.sourceW},${imgObj.sourceH}}`
+					};
+					next(index + 1);
+				})(0);
+			});
+		}
+	}
+
+	productJson(imgNameObj){
+		let self = this;
+		for (let i in imgNameObj) {
+			self.getImgSize(this._output + i + '.png').then((result) => {
+				let obj = {
+					file:i + '.png',
+					frames: {},
+				};
+				(function next(index) {
+					if (index >= imgNameObj[i].length) {
+						fs.writeFile(self._output+i  + '.json', JSON.stringify(obj,2,2), {
+							flag: 'w'
+						}, (err) => {
+							if (err) {
+								console.error(err);
+							}
+						});
+						return;
+					}
+					let imgObj = imgNameObj[i][index];
+					//{"x":2,"y":723,"w":85,"h":107,"offX":10,"offY":19,"sourceW":110,"sourceH":161}
+					obj.frames[imgObj.name] = {
+						x:imgObj.x,
+						y:imgObj.y,
+						w:imgObj.sourceW,
+						h:imgObj.sourceH,
+						offX:0,
+						offY:0,
+						sourceW:imgObj.sourceW,
+						sourceH:imgObj.sourceH,
 					};
 					next(index + 1);
 				})(0);

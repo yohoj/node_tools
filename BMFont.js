@@ -15,7 +15,7 @@ let imgX = 0;
 let nowCount = 0;
 function readDir(path) {
 	console.log(path);
-	let arr = path.split('/');
+	let arr = path.indexOf('/') >= 0 ? path.split('/') : path.split('\\');
 	let outputName = arr[arr.length-2];
 	fs.readdir(path, (err, files) => {
 		console.log('files:',files);
