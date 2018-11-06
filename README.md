@@ -1,5 +1,6 @@
-##图片合成工具
-node 版本6.8.1
+windows node 版本6.8.1
+mac node版本支持8.11.1
+## 图片合成工具
 首先要安装GraphicsMagick或者ImageMagick
 mac安装如下
 ```
@@ -53,11 +54,11 @@ design/
 ```
 只有文件夹后缀为'_p'的才会合成图片
 
-##图片压缩批处理
+## 图片压缩批处理
 ```$xslt
 node zipImage.js sourceFile
 ```
-##帧动画合成
+## 帧动画合成
 ```$xslt
 node movieClip.js sourceFile targetFile
 ```
@@ -85,12 +86,12 @@ soruceFile名字应该与plist图集名字一致并且在creator中打开生成.
 	"meta":"battle_other_animation"
 }
 ```
-##BMFont合成
+## BMFont合成
 ```$xslt
 node BMFont.js sourceFile targetFile
 ```
 图片名称就是字的名称 '.'例外用中文'点'来表示
-##excel导出工具
+## excel导出工具
 ```$xslt
 node excel.js source.excels targetFile
 ```
