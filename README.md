@@ -9,9 +9,12 @@ brew install graphicsmagick
 ```
 windows安装graphicsmagick[下载地址](http://www.graphicsmagick.org/INSTALL-windows.html)
 
-主要用来合成cocos creator所需要的plist文件用法
+主要用来合成cocos creator所需要的plist文件或者白鹭的json文件,用法<br>
+engine：egret白鹭<br>
+engine: cocos <br>
+默认cocos
 ```
-node imgMerge.js sourceDir outputDir
+node imgMerge.js sourceDir outputDir engine
 ```
 sourceDir(图片目录) 结构如下：
 ```
