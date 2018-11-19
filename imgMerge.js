@@ -10,10 +10,9 @@ const pngquant = require('node-pngquant-native');
 
 
 class ImgMerge {
-	constructor(source, output,type) {
+	constructor(source, output) {
 		this._source = source;
 		this._output = output;
-		this._type = type;
 		let projectPath = process.cwd();
 		this.modifyTimesPath = path.join(projectPath, 'design/images/sheetModifyTime.json');
 		this.inPath = path.join(projectPath, 'design/images');
@@ -122,12 +121,7 @@ class ImgMerge {
 					self.mergeImg(imgNameObj[name], name);
 
 				}*/
-				if(self._type == 0){
-					self.productPlist(imgNameObj);
-				}
-				else{
-					self.productJson(imgNameObj);
-				}
+				self.productPlist(imgNameObj);
 				fs.writeFileSync(self.modifyTimesPath, JSON.stringify(self.modifyTimes, 2, 2), 'utf-8');
 				return;
 			}
@@ -299,43 +293,6 @@ class ImgMerge {
 		}
 	}
 
-	productJson(imgNameObj){
-		let self = this;
-		for (let i in imgNameObj) {
-			self.getImgSize(this._output + i + '.png').then((result) => {
-				let obj = {
-					file:i + '.png',
-					frames: {},
-				};
-				(function next(index) {
-					if (index >= imgNameObj[i].length) {
-						fs.writeFile(self._output+i  + '.json', JSON.stringify(obj,2,2), {
-							flag: 'w'
-						}, (err) => {
-							if (err) {
-								console.error(err);
-							}
-						});
-						return;
-					}
-					let imgObj = imgNameObj[i][index];
-					//{"x":2,"y":723,"w":85,"h":107,"offX":10,"offY":19,"sourceW":110,"sourceH":161}
-					obj.frames[imgObj.name] = {
-						x:imgObj.x,
-						y:imgObj.y,
-						w:imgObj.sourceW,
-						h:imgObj.sourceH,
-						offX:0,
-						offY:0,
-						sourceW:imgObj.sourceW,
-						sourceH:imgObj.sourceH,
-					};
-					next(index + 1);
-				})(0);
-			});
-		}
-	}
-
 	//md5加密
 	mdEncode(path) {
 		let buffer = fs.readFileSync(path);
@@ -387,4 +344,14 @@ class ImgMerge {
 
 }
 
-module.exports = ImgMerge;
+function main(argvs) {
+    let source = argvs[0];
+    let output = argvs[1];
+    if(!source){
+	    source = process.cwd() + '/design/images/';
+    	output = process.cwd() + '/assets/resources/textures/';
+    }
+    let img = new imgMerge(source, output);
+
+}
+main(process.argv.slice(2));
