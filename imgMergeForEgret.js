@@ -322,7 +322,7 @@ class ImgMergeForEgret {
                     }
                     let imgObj = imgNameObj[i][index];
                     //{"x":2,"y":723,"w":85,"h":107,"offX":10,"offY":19,"sourceW":110,"sourceH":161}
-                    obj.frames[imgObj.name] = {
+                    obj.frames[`${i}_${imgObj.name}`] = {
                         x: imgObj.x,
                         y: imgObj.y,
                         w: imgObj.sourceW,
