@@ -130,7 +130,6 @@ function to_json(workbook, fileName, output) {
     }
     index++;
   }
-  console.log(worksheet);
   let temp = xlsx.utils.sheet_to_json(worksheet);
   // console.log(temp);
   temp.splice(0, 2);
