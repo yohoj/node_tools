@@ -236,7 +236,17 @@ class ImgMergeForEgret {
         let index = path.indexOf('_p');
         // let lastIndex = path.slice(0, index).lastIndexOf('/');
         // let firstName = path.slice(0, index).slice(lastIndex + 1);
-        let lastName = path.slice(index + 3).replace(/\//g, '_').replace('.png', '');
+        let lastName = '';
+        switch(os.type()){
+          case 'Linux':
+          case 'Darwin':
+          lastName = path.slice(index + 3).replace(/\//g, '_').replace('.png', '');
+          break;
+          case 'Windows_NT':
+          lastName = path.slice(index + 3).replace(/\\/g, '_').replace('.png', '');
+          break;
+        }
+        
         return lastName;
     }
 
@@ -290,6 +300,7 @@ class ImgMergeForEgret {
                 if(item.name == 'sheet_' + i){
                     item.subkeys = '';
                     imgNameObj[i].forEach(img=>{
+                      console.log(i,img.name);
                         item.subkeys += i + '_' + img.name + ','
                     });
                     item.subkeys = item.subkeys.substring(0,item.subkeys.length-1);

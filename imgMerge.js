@@ -203,8 +203,18 @@ class ImgMerge {
 		let index = path.indexOf('_p');
 		// let lastIndex = path.slice(0, index).lastIndexOf('/');
 		// let firstName = path.slice(0, index).slice(lastIndex + 1);
-		let lastName = path.slice(index + 3).replace(/\//g, '_').replace('.png', '');
-		return lastName;
+    let lastName = '';
+    switch(os.type()){
+      case 'Linux':
+      case 'Darwin':
+      lastName = path.slice(index + 3).replace(/\//g, '_').replace('.png', '');
+      break;
+      case 'Windows_NT':
+      lastName = path.slice(index + 3).replace(/\\/g, '_').replace('.png', '');
+      break;
+    }
+    
+    return lastName;
 	}
 
 	//合图
