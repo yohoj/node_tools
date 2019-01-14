@@ -300,7 +300,6 @@ class ImgMergeForEgret {
                 if(item.name == 'sheet_' + i){
                     item.subkeys = '';
                     imgNameObj[i].forEach(img=>{
-                      console.log(i,img.name);
                         item.subkeys += i + '_' + img.name + ','
                     });
                     item.subkeys = item.subkeys.substring(0,item.subkeys.length-1);

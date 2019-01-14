@@ -22,7 +22,10 @@ files.forEach((fileName)=>{
 	if(fileName.match(/sheet.*?json/)){
 		var sheet = JSON.parse(fs.readFileSync(path.join(assetsPath, fileName), 'utf-8'));
 		for(var key in sheet.frames){
-			lines.push(`	static ${key}:string = '${key}';`);
+            if(['0','1','2','3','4','5','6','7','8','9'].indexOf(key[0]) < 0){//排除数字开头命名的文件
+                console.log(key);
+                lines.push(`	static ${key}:string = '${key}';`);
+            }
 		}
 	}
 });

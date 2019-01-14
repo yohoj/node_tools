@@ -9,7 +9,7 @@ var path = require('path');
 var dir = process.cwd();
 console.log(`dir -> ${dir}`);
 var projectPath = dir;
-var langPath = path.join(projectPath, 'resource/configs/lang.json');
+var langPath = path.join(projectPath, 'resource/assets/configs/lang.json');
 var libsPath = path.join(projectPath, 'src/model/LanguagePack.ts');
 var lang = JSON.parse(fs.readFileSync(langPath, 'utf-8'));
 
