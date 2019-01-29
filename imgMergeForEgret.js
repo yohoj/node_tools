@@ -49,7 +49,9 @@ class ImgMergeForEgret {
         let lines = [];
         //提取所有keys
         this.resConfig.resources.forEach((resource) => {
+          if(['0','1','2','3','4','5','6','7','8','9'].indexOf(resource.name[0]) < 0){
             lines.push(`	static ${resource.name}:string = '${resource.name}';`);
+          }
         });
 
         //提取所有subkeys
@@ -57,7 +59,9 @@ class ImgMergeForEgret {
             return item.name.indexOf('sheet_') >= 0;
         }).forEach(item => {
             item.subkeys.split(',').forEach(key => {
+              if(['0','1','2','3','4','5','6','7','8','9'].indexOf(key[0]) < 0){
                 lines.push(`	static ${key}:string = '${key}';`);
+              }
             });
         });
         let content = templateHeader + lines.join('\n') + templateFooter;

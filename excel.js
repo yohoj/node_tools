@@ -93,7 +93,7 @@ function to_json(workbook, fileName, output) {
                 }
                 sheet.r = '<t>' + sheet.v + '</t>';
             } else if (!sheet) {
-                // console.log(worksheet[switchStr(index) + i]);
+                // console.log(worksheet[switchStr(index) + '2']);
                 switch (worksheet[switchStr(index) + '2'].v) {
                     case 'STRING':
                         worksheet[switchStr(index) + i] = {
@@ -166,6 +166,7 @@ function to_json(workbook, fileName, output) {
             json = JSON.parse(data);
         }
         json[config[fileName].title] = result;
+        saveInterface(json);
         fs.writeFile(output + '/' + 'config.json', JSON.stringify(json, 2, 2), {
             flag: 'w'
         }, (err) => {
@@ -200,6 +201,50 @@ function switchStr(num) {
     }
     return String.fromCharCode(Math.floor(num / 26) + 64) + String.fromCharCode(num % 26 + 65);
 }
+
+function saveInterface(data){
+  let projectPath = process.cwd();
+  let resNamesPath = path.join(projectPath, '/src/model/MetaInterface.ts');
+  let content = ''
+  for(let i in data){
+    let name = capitalize(i);
+    if(name[name.length-1] == 's'){
+      name = name.slice(0,name.length-1);
+    }
+    let templateHeader = `interface Meta${name}{\n`;
+    let templateFooter = `\n}`;
+    let lines = [];
+    for(let j in data[i]){
+      if(typeof data[i][j] == 'object'){
+        for(let k in data[i][j]){
+          // let type = typeof data[i][j][k] == 'object' ? 'any' : typeof data[i][j][k];
+          lines.push(`	${k}:${typeof data[i][j][k]};`);
+        }
+        break;
+      }
+      else{
+        lines.push(`	${j}:${typeof data[i][j]};`);
+      }
+    }
+    let str = templateHeader + lines.join('\n') + templateFooter;
+    content = content + '\n' + str;
+  }
+  fs.writeFileSync(resNamesPath,content,'utf-8');
+}
+
+function judgeObject(data,key){
+  for(let i in data){
+    if(typeof data[i] == 'object'){
+      return judgeObject(data[i],i);
+    }
+    else{
+      return {key:i,value:typeof data[i]};
+    }
+  }
+}
+
+const capitalize = ([first,...rest], lowerRest = false) =>
+first.toUpperCase() + (lowerRest ? rest.join('').toLowerCase() : rest.join(''));
 
 
 readExcel(process.argv.slice(2));
