@@ -32,174 +32,179 @@ let workbook;
 		'names':['name','id','price','type','shop'],
 	}
 };*/
-function readExcel(argvs) {
+async function readExcel(argvs) {
   let source = argvs[0];
   let output = argvs[1];
   console.log('start path:', source, 'output:', output);
   let arr = source.indexOf('/') >= 0 ? source.split('/') : source.split('\\');
   let fileName = arr[arr.length - 1].split('.')[0];
   workbook = xlsx.readFile(source);
-  to_json(workbook, fileName, output);
+  await to_json(workbook, fileName, output);
 }
 
 function to_json(workbook, fileName, output) {
-  let result = {};
-  // 获取 Excel 中所有表名
-  let sheetNames = workbook.SheetNames; // 返回 ['sheet1', 'sheet2']
-  /*workbook.SheetNames.forEach((sheetName) => {
-  	let worksheet = workbook.Sheets[sheetName];
-  	result[sheetName] = xlsx.utils.sheet_to_json(worksheet);
-  });*/
-  let worksheet = workbook.Sheets[sheetNames[0]];
-  // console.log(worksheet, worksheet['!ref']);
-  let range = worksheet['!ref'].split(':');
-  let startRow = 1;
-  let endRow = 1;
-  let startColumn = '';
-  let endColumn = ''
-  range.forEach((str, index) => {
-    let tempColumn = '';
-    let tempRow = 1;
-    for (let i = 0; i < str.length; ++i) {
-      if (str.charCodeAt(i) >= 65 && str.charCodeAt(i) < 91) {
-        tempColumn += str[i];
-      } else {
-        tempRow = str.substring(i);
-        // console.log(i,str[i],tempRow);
+  return new Promise((resolve, reject) => {
+    let result = {};
+    // 获取 Excel 中所有表名
+    let sheetNames = workbook.SheetNames; // 返回 ['sheet1', 'sheet2']
+    /*workbook.SheetNames.forEach((sheetName) => {
+    	let worksheet = workbook.Sheets[sheetName];
+    	result[sheetName] = xlsx.utils.sheet_to_json(worksheet);
+    });*/
+    let worksheet = workbook.Sheets[sheetNames[0]];
+    // console.log(worksheet, worksheet['!ref']);
+    let range = worksheet['!ref'].split(':');
+    let startRow = 1;
+    let endRow = 1;
+    let startColumn = '';
+    let endColumn = ''
+    range.forEach((str, index) => {
+      let tempColumn = '';
+      let tempRow = 1;
+      for (let i = 0; i < str.length; ++i) {
+        if (str.charCodeAt(i) >= 65 && str.charCodeAt(i) < 91) {
+          tempColumn += str[i];
+        } else {
+          tempRow = str.substring(i);
+          // console.log(i,str[i],tempRow);
+          break;
+        }
+      }
+      switch (index) {
+        case 0:
+          startColumn = tempColumn;
+          startRow = parseInt(tempRow);
+          break;
+        case 1:
+          endColumn = tempColumn;
+          endRow = parseInt(tempRow);
+          break;
+      }
+    })
+    // 获取表的有效范围
+    let index = 0;
+    // console.log(startColumn,endColumn);
+    while (1) {
+      for (let i = startRow; i <= endRow; ++i) {
+        let sheet = worksheet[switchStr(index) + i];
+        // console.log(switchStr(index) + i,sheet);
+        if (sheet && i == 1) {
+          if (config[fileName].names) {
+            sheet.h = sheet.w = sheet.v = config[fileName].names[index];
+          }
+          sheet.r = '<t>' + sheet.v + '</t>';
+        } else if (!sheet) {
+          // console.log(worksheet[switchStr(index) + '2']);
+          switch (worksheet[switchStr(index) + '2'].v) {
+            case 'STRING':
+              worksheet[switchStr(index) + i] = {
+                t: 's',
+                h: '',
+                w: '',
+                v: '',
+                r: '<t> </t>'
+              };
+              break;
+            case 'INT':
+              worksheet[switchStr(index) + i] = {
+                t: 'n',
+                h: 0,
+                w: 0,
+                v: 0,
+                r: '<t>0</t>'
+              };
+              break;
+            case 'INTS':
+              worksheet[switchStr(index) + i] = {
+                t: 's',
+                h: '0|0',
+                w: '0|0',
+                v: '0|0',
+                r: '<t>0|0</t>'
+              };
+              break;
+            case 'STRINGS':
+              worksheet[switchStr(index) + i] = {
+                t: 's',
+                h: '0|0',
+                w: '0|0',
+                v: '0|0',
+                r: '<t>0|0</t>'
+              };
+          }
+          // worksheet[]
+        }
+      }
+      let column = switchStr(index);
+      if (column == endColumn) {
         break;
       }
+      index++;
     }
-    switch (index) {
-      case 0:
-        startColumn = tempColumn;
-        startRow = parseInt(tempRow);
-        break;
-      case 1:
-        endColumn = tempColumn;
-        endRow = parseInt(tempRow);
-        break;
-    }
-  })
-  // 获取表的有效范围
-  let index = 0;
-  // console.log(startColumn,endColumn);
-  while (1) {
-    for (let i = startRow; i <= endRow; ++i) {
-      let sheet = worksheet[switchStr(index) + i];
-      // console.log(switchStr(index) + i,sheet);
-      if (sheet && i == 1) {
-        if (config[fileName].names) {
-          sheet.h = sheet.w = sheet.v = config[fileName].names[index];
-        }
-        sheet.r = '<t>' + sheet.v + '</t>';
-      } else if (!sheet) {
-        // console.log(worksheet[switchStr(index) + '2']);
-        switch (worksheet[switchStr(index) + '2'].v) {
-          case 'STRING':
-            worksheet[switchStr(index) + i] = {
-              t: 's',
-              h: '',
-              w: '',
-              v: '',
-              r: '<t> </t>'
-            };
-            break;
+    let temp = xlsx.utils.sheet_to_json(worksheet);
+    // console.log(temp[0],temp[1],temp[2]);
+    let arr = temp.splice(0, 2);
+    temp.forEach((obj, index) => {
+      for (let i in obj) {
+        switch (arr[0][i]) {
           case 'INT':
-            worksheet[switchStr(index) + i] = {
-              t: 'n',
-              h: 0,
-              w: 0,
-              v: 0,
-              r: '<t>0</t>'
-            };
+            obj[i] = parseInt(obj[i]);
             break;
           case 'INTS':
-            worksheet[switchStr(index) + i] = {
-              t: 's',
-              h: '0|0',
-              w: '0|0',
-              v: '0|0',
-              r: '<t>0|0</t>'
-            };
+            let ints = obj[i].split('|');
+            ints.forEach((value, index) => {
+              ints[index] = parseInt(value);
+            });
+            obj[i] = ints;
             break;
           case 'STRINGS':
-            worksheet[switchStr(index) + i] = {
-              t: 's',
-              h: '0|0',
-              w: '0|0',
-              v: '0|0',
-              r: '<t>0|0</t>'
-            };
+            let strings = obj[i].split('|');
+            obj[i] = strings;
+            break;
+          default:
+            break;
         }
-        // worksheet[]
       }
-    }
-    let column = switchStr(index);
-    if (column == endColumn) {
-      break;
-    }
-    index++;
-  }
-  let temp = xlsx.utils.sheet_to_json(worksheet);
-  // console.log(temp[0],temp[1],temp[2]);
-  let arr = temp.splice(0, 2);
-  temp.forEach((obj, index) => {
-    for (let i in obj) {
-      switch (arr[0][i]) {
-        case 'INT':
-          obj[i] = parseInt(obj[i]);
-          break;
-        case 'INTS':
-          let ints = obj[i].split('|');
-          ints.forEach((value, index) => {
-            ints[index] = parseInt(value);
-          });
-          obj[i] = ints;
-          break;
-        case 'STRINGS':
-          let strings = obj[i].split('|');
-          obj[i] = strings;
-          break;
-        default:
-          break;
+      let key = obj[config[fileName].key];
+      if (config[fileName].array && !result[key]) {
+        result[key] = [];
       }
-    }
-    let key = obj[config[fileName].key];
-    if (config[fileName].array && !result[key]) {
-      result[key] = [];
-    }
-    if (config[fileName].array) {
-      result[key].push(obj);
-    } else {
-      result[key] = obj;
-    }
-  });
-  if (config[fileName].method) {
-    config[fileName].method(result);
-  }
-
-  let json = {} //JSON.stringify({fileName:result}, 2, 2);
-  fs.readFile(output + '/' + 'config.json', {
-    flag: 'r'
-  }, (err, data) => {
-    if (data) {
-      json = JSON.parse(data);
-    }
-    json[config[fileName].title] = result;
-    saveInterface(json);
-    fs.writeFile(output + '/' + 'config.json', JSON.stringify(json, 2, 2), {
-      flag: 'w'
-    }, (err) => {
-      if (err) {
-        console.error(err);
+      if (config[fileName].array) {
+        result[key].push(obj);
+      } else {
+        result[key] = obj;
       }
     });
+    if (config[fileName].method) {
+      config[fileName].method(result);
+    }
+
+    let json = {} //JSON.stringify({fileName:result}, 2, 2);
+    fs.readFile(output + '/' + 'config.json', {
+      flag: 'r'
+    }, (err, data) => {
+      if (data) {
+        json = JSON.parse(data);
+      }
+      json[config[fileName].title] = result;
+      saveInterface(json);
+      fs.writeFile(output + '/' + 'config.json', JSON.stringify(json, 2, 2), {
+        flag: 'w'
+      }, (err) => {
+        if (err) {
+          reject(err);
+          console.error(err);
+        }
+        resolve();
+      });
+    });
+
+    // 获取 A1 单元格对象
+    // 获取 A1 中的值
+    /*let sheet1 = JSON.stringify(result, 2, 2)['Sheet1'];
+    return result;*/
   });
 
-  // 获取 A1 单元格对象
-  // 获取 A1 中的值
-  /*let sheet1 = JSON.stringify(result, 2, 2)['Sheet1'];
-  return result;*/
 }
 
 function switchStr(num) {
@@ -305,8 +310,10 @@ function judgeObject(data, key) {
   };
 }
 
-const capitalize = ([first, ...rest], lowerRest = false) =>
-  first.toUpperCase() + (lowerRest ? rest.join('').toLowerCase() : rest.join(''));
+const capitalize = ([first, ...rest], lowerRest = false) => {
+  // console.log(first, rest);
+  return first.toUpperCase() + (lowerRest ? rest.join('').toLowerCase() : rest.join(''));
+}
 
-
+module.exports = {readExcel}
 readExcel(process.argv.slice(2));

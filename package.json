@@ -10,7 +10,6 @@
     "get-pixels": "^3.3.0",
     "gm": "^1.23.1",
     "images": "^3.0.1",
-    "node-pngquant-native": "^2.0.1",
     "path": "^0.12.7",
     "plist": "^3.0.1",
     "png-bound-nodejs": "^1.0.2",

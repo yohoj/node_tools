@@ -6,7 +6,7 @@ const plist = require('plist');
 const crypto = require('crypto');
 const MaxRectsBinPack = require('./MaxRectsBinPack');
 const os = require('os');
-const pngquant = require('node-pngquant-native');
+// const pngquant = require('node-pngquant-native');
 
 
 
@@ -270,7 +270,8 @@ class ImgMergeForEgret {
                     if (err) console.log(err);
                     else {
                         if ((self._output + output).indexOf('_c') < 0) {
-                            self.zipImage(self._output + output + '.png', resolve);
+                            resolve();
+                            // self.zipImage(self._output + output + '.png', resolve);
                         } else {
                             resolve();
                         }
@@ -280,7 +281,7 @@ class ImgMergeForEgret {
     }
 
     //压缩图片
-    zipImage(path, resolve) {
+   /*  zipImage(path, resolve) {
         // let pngquant = require('node-pngquant-native');
         fs.readFile(path, (err, buffer) => {
             if (err) throw err;
@@ -293,7 +294,7 @@ class ImgMergeForEgret {
                 resolve();
             });
         });
-    }
+    } */
 
 
 
