@@ -119,4 +119,8 @@ node excel.js source.excels targetFile
 
 module.exports = config;
 ```
+### 导出文件夹下所有excel文件
+```
+node allexcel.js source output
+```
 
