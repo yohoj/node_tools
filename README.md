@@ -1,5 +1,4 @@
-windows node 版本6.8.1
-mac node版本支持8.11.1
+node版本 8.0以上
 ## 图片合成工具
 首先要安装GraphicsMagick或者ImageMagick
 mac安装如下
@@ -54,7 +53,7 @@ design/
 ```
 只有文件夹后缀为'_p'的才会合成图片
 
-## 图片压缩批处理
+## 图片压缩批处理(暂时不能用）
 ```$xslt
 node zipImage.js sourceFile
 ```
