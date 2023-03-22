@@ -1,6 +1,5 @@
 const gm = require('gm');
 const fs = require('fs');
-const path = require('path');
 const getPixels = require("get-pixels");
 const plist = require('plist');
 const crypto = require('crypto');
