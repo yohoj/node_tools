@@ -4,7 +4,6 @@ const path = require('path');
 const getPixels = require("get-pixels");
 const plist = require('plist');
 const crypto = require('crypto');
-const MaxRectsBinPack = require('./MaxRectsBinPack');
 const pngquant = require('node-pngquant-native');
 
 
