@@ -4,9 +4,7 @@
  */
 const gm = require('gm');
 const fs = require('fs');
-const path = require('path');
 const getPixels = require("get-pixels");
-const crypto = require('crypto');
 const pngquant = require('node-pngquant-native');
 const mkdirp = require('mkdirp');
 const getDirName = require('path').dirname;
