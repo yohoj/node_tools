@@ -37,33 +37,7 @@ class Font {
 		let imgNameArr = [];
 		// let imgSourceKey = [];
 		let self = this;
-		/*for (let i in imgSourceObj) {
-			imgSourceKey.push(i);
-		}*/
-		/*(function nextObj(key) {
-			if (key >= imgSourceKey.length) {
-				for (let name in imgNameObj) {
-					// let sp  = new MaxRectsBinPack(2048,2048,true);
-					imgNameObj[name].forEach((f,index)=>{
-
-					});
-					for(let i=0; i<imgNameObj[name].length; ++i){
-						imgNameObj[name][i].x = i * imgNameObj[name][i].width;
-					}
-					// imgNameObj[name] = sp.insert2(imgNameObj[name],2);
-					console.log('start merge:',name);
-					console.log(imgNameObj);
-					self.mergeImg(imgNameObj[name], name);
-
-				}
-				self.productPlist(imgNameObj);
-				return;
-			}
-			let pathArr = imgSourceObj[imgSourceKey[key]];
-			// console.log(pathArr);
-			if (!imgNameObj[imgSourceKey[key]]) {
-				imgNameObj[imgSourceKey[key]] = [];
-			}*/
+		
 		(function next(index) {
 			if (index >= files.length) {
 				// let sp  = new MaxRectsBinPack(2048,2048,true);
