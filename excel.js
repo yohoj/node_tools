@@ -47,16 +47,12 @@ function to_json(workbook, fileName, output) {
     let result = {};
     // 获取 Excel 中所有表名
     let sheetNames = workbook.SheetNames; // 返回 ['sheet1', 'sheet2']
-    /*workbook.SheetNames.forEach((sheetName) => {
-    	let worksheet = workbook.Sheets[sheetName];
-    	result[sheetName] = xlsx.utils.sheet_to_json(worksheet);
-    });*/
+
     let worksheet = workbook.Sheets[sheetNames[0]];
     // console.log(worksheet, worksheet['!ref']);
     let range = worksheet['!ref'].split(':');
     let startRow = 1;
     let endRow = 1;
-    let startColumn = '';
     let endColumn = ''
     range.forEach((str, index) => {
       let tempColumn = '';
@@ -72,7 +68,6 @@ function to_json(workbook, fileName, output) {
       }
       switch (index) {
         case 0:
-          startColumn = tempColumn;
           startRow = parseInt(tempRow);
           break;
         case 1:

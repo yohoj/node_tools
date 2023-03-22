@@ -64,14 +64,14 @@ processMap.ts = function() {
 		names.push(`static ${name}:string = '${name}';\n`);
 	});
 
-	let tsContent = `class ProtocolsProtocols {
-	static getMap(): any {
-		let protoIDs = {};
-		${lines.join('\t\t')}
-		return protoIDs;
-	}
-}
-`;
+// 	let tsContent = `class ProtocolsProtocols {
+// 	static getMap(): any {
+// 		let protoIDs = {};
+// 		${lines.join('\t\t')}
+// 		return protoIDs;
+// 	}
+// }
+// `;
 
 	let tsProtoNamesContent = `class ProtoNames{
 	${names.join('\t')}}`;

@@ -51,7 +51,6 @@ function readdir(path) {
 				// 	jsonPath = path + '/' + name;
 				// }
 			}
-			// console.log(imgNames);
 			// fs.close()
 			resolve({imgNames,jsonPath})
 
