@@ -95,8 +95,6 @@ class Font {
 	//名字分割
 	nameFormat(path) {
 		let index = path.indexOf('_p');
-		// let lastIndex = path.slice(0, index).lastIndexOf('/');
-		// let firstName = path.slice(0, index).slice(lastIndex + 1);
 		let lastName = path.slice(index + 3).replace(/\//g, '_').replace('.png', '');
 		return lastName;
 	};
