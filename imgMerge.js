@@ -6,7 +6,6 @@ const plist = require('plist');
 const crypto = require('crypto');
 const MaxRectsBinPack = require('./MaxRectsBinPack');
 const os = require('os');
-// const pngquant = require('node-pngquant-native');
 
 
 class ImgMerge {
