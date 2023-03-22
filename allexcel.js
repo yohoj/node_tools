@@ -7,7 +7,6 @@ const allExcel = async (argvs) => {
   console.log(argvs);
   let source = argvs[0];
   let output = argvs[1];
-  let paths = [];
   let index = 0;
   for(let i in config){
     await readExcel([source + i + '.xlsx',output]);
