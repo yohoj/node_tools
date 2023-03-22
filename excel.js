@@ -53,7 +53,6 @@ function to_json(workbook, fileName, output) {
     let range = worksheet['!ref'].split(':');
     let startRow = 1;
     let endRow = 1;
-    let startColumn = '';
     let endColumn = ''
     range.forEach((str, index) => {
       let tempColumn = '';
@@ -69,7 +68,6 @@ function to_json(workbook, fileName, output) {
       }
       switch (index) {
         case 0:
-          startColumn = tempColumn;
           startRow = parseInt(tempRow);
           break;
         case 1:
